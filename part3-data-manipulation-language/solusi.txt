@@ -2,57 +2,153 @@ RELEASE 1:
 
 1) Insert
     1.a) Insert 3 product type.
+		INSERT INTO product_type (nama) 
+		VALUES('Mouse'),('Keyboard'),('Web Camera')
 
     1.b) Insert 2 product dengan product type id = 1
+		INSERT INTO product (nama, stok, harga, product_type_id)
+		VALUES ('Mouse Logitech B175',3,109000,1),
+		('Mouse Logitech B100',5,75000,1),
+		('Mouse Logitech M350',2,305000,1)
 
     1.c) Insert 3 product dengan product type id = 2
+		INSERT INTO product (nama, stok, harga, product_type_id)
+		VALUES ('Keyboard K380 Multi-Device Bluetooth',2,700000,2),
+		('Keyboard MK240 Wireless',7,450000,2),
+		('MK470 Slim Wireless',2,2000000,2)
 
     1.d) Insert 3 product dengan product type id = 3
+		INSERT INTO product (nama, stok, harga, product_type_id)
+		VALUES ('Logitech C270',1,269000,3),
+		('Logitech Webcam C922 PRO',6,970000,3),
+		('Havit HV-N5086',3,250000,3)
 
     1.e) Insert product description pada setiap product.
+		INSERT INTO product_desc (description, spesification)
+		VALUES ('Mouse Wireless Logitech','Koneksi : USB, Wireless Mouse 2.4GHz, Warna Black, Garansi 1 Tahun'),
+ 		('Mouse Cable Logitech','Koneksi : Wire cable 180cm, Warna Black'),
+ 		('Mouse Wireless Logitech','Koneksi : USB, Slim silent, Warna Black White Pink, Garansi 1 Tahun')
 
     1.f) Insert 3 payment methods.
+		INSERT INTO payment_method (nama)
+		VALUES ('Transfer Bank'),
+		('Transfer Virtual Account'), 
+		('Kartu Kredit/Cicilan')
 
     1.g) Insert 5 user pada tabel user.
+		INSERT INTO pelanggan (nama, alamat, tanggal_lahir, status_user, gender)
+		VALUES ('Nurul Kholifah','Jl. F. Kalasuat, Kota Sorong, Papua Barat','1998-09-09','true','F'),
+		('Ulil Alfiansyah','Jl. Simbar Menjangan, Kota Malang, Jawa Timur','1995-08-01','true','M'),
+		('Arie Yudhi Pratama','Jl. Semanggi Barat, Kota Malang, Jawa Timur','2000-07-14','true','M'),
+		('Ningrum Ardiana','Jl. Basuki Rahmat KM 08, Kota Makassar, Sulawesi Selatan','1999-12-06','true','F'),
+		('Rahmawati Anggita','Jl. Mangga Dua RK 5, Kota Manokwari, Papua Barat','1995-11-25','true','F')
 
     1.h) Insert 3 transaksi di masing-masing user (min 3 user). (soal berlanjut ke soal 1.j)
+		INSERT INTO transaksi (pelanggan_id, payment_method_id, tanggal, paid_amount)
+		VALUES (1,2,(CURRENT_DATE - INTERVAL '10 days'),2259000),
+		(1,2,(CURRENT_DATE - INTERVAL '3 days'),509000),
+		(1,2,(CURRENT_DATE - INTERVAL '10 days'),2600000),
+ 
+		(2,1,(CURRENT_DATE),700000),
+		(2,2,(CURRENT_DATE - INTERVAL '1 days'),1005000),
+		(2,3,(CURRENT_DATE - INTERVAL '2 days'),1080000),
+ 
+		(4,2,(CURRENT_DATE),380000),
+		(4,3,(CURRENT_DATE - INTERVAL '1 days'),2269000),
+		(4,1,(CURRENT_DATE - INTERVAL '4 days'),2719000)
 
     1.i) Insert 3 product di masing-masing transaksi.
+		INSERT INTO transaksi_detail (product_id, transaksi_id, qty, harga, sub_total)
+		VALUES (1,1,1,109000,109000),
+		(2,1,2,75000,150000),
+		(6,1,1,2000000,2000000),
+
+		(9,2,1,250000,250000),
+		(6,2,2,75000,150000),
+		(1,2,1,109000,109000),
+
+		(5,3,1,450000,450000),
+		(9,3,3,250000,750000),
+		(4,3,2,700000,1400000)
 
 2) Select
     2.a) Tampilkan nama user / pelanggan dengan gender Laki-laki / M.
+		SELECT nama FROM pelanggan 
+		WHERE gender = 'M'
 
     2.b) Tampilkan product dengan id = 3.
+		SELECT * FROM product
+		WHERE id = 3
 
     2.c) Tampilkan data pelanggan yang created_at dalam range 7 hari kebelakang dan mempunyai nama mengandung kata ‘a’.
+		SELECT * FROM pelanggan 
+		WHERE created_at  >= (CURRENT_DATE - INTERVAL '7 days') AND nama LIKE ‘%a%’
 
     2.d) Hitung jumlah user / pelanggan dengan status gender Perempuan.
+		SELECT COUNT(*) FROM pelanggan
+		WHERE gender = 'F'
 
     2.e) Tampilkan data pelanggan dengan urutan sesuai nama abjad
+		SELECT * FROM pelanggan
+		ORDER BY nama ASC
 
     2.f) Tampilkan 5 data transaksi dengan product id = 3
+		SELECT TOP (5) * FROM transaksi
+		WHERE product_id = 3
 
 3. Update
     3.a) Ubah data product id 1 dengan nama ‘product dummy’.
+		UPDATE product SET nama = 'product dummy' 
+		WHERE id = 1
 
     3.b) Update qty = 3 pada transaction detail dengan product id 1.
+		UPDATE transaction_detail SET qty = 3
+		WHERE id = 1
 
 4. Delete
     4.a) Delete data pada tabel product dengan id 1.
+		DELETE FROM product
+		WHERE id = 1
 
     4.b) Delete pada tabel product dengan product-type id 1.
+		DELETE FROM product
+		WHERE product_type_id = 1
 
 
 RELEASE 2: Join, Union, Sub-query, Function
 
 1. Gabungkan data transaksi dari user id 1 dan user id 2.
+	SELECT * FROM transaksi WHERE pelanggan_id = 1
+	UNION 
+	SELECT * FROM transaksi WHERE pelanggan_id = 2
+	ORDER BY pelanggan_id ASC
 
 2. Tampilkan jumlah harga transaksi user id 1.
+	SELECT SUM(paid_amount) AS harga_transaksi FROM transaksi
+	WHERE pelanggan_id = 1
 
 3. Tampilkan total transaksi dengan product type 2.
+	SELECT SUM (sub_total) AS total_trans FROM (
+	SELECT * FROM transaksi_detail AS trans
+	LEFT JOIN product AS pdr
+	ON trans.product_id = pdr.product_type_id) AS gab
+	WHERE product_type_id = 2
 
 4. Tampilkan semua field table product dan field name table product type yang saling berhubungan.
+	SELECT pd.*, pdt.nama AS product_type_nama FROM product AS pd
+	LEFT JOIN product_type AS pdt
+	ON pd.product_type_id = pdt.id
 
 5. Tampilkan semua field table transaction, field name table product dan field name table user.
+	SELECT tsd.*, pr.nama AS product_nama, pl.nama AS pelanggan_nama
+	FROM transaksi AS ts
+	LEFT JOIN transaksi_detail as tsd
+	ON ts.id = tsd.transaksi_id
+	LEFT JOIN product AS pr
+	ON tsd.product_id = pr.id
+	LEFT JOIN pelanggan AS pl
+	ON ts.pelanggan_id = pl.id
 
 6. Tampilkan data products yang tidak pernah ada di tabel transaction_details dengan sub-query.
+	SELECT * FROM product
+	WHERE id NOT IN (SELECT distinct product_id FROM transaksi_detail)
